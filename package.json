@@ -1,0 +1,27 @@
+{
+  "name": "ruthless",
+  "version": "0.1.0",
+  "description": "Crawl the web breadth-first from a seed url, statefully",
+  "keywords": ["web", "spider", "crawl", "recurse", "postgres"],
+  "bugs": {
+    "url" : "https://github.com/chbrown/ruthless/issues",
+    "email": "io@henrian.com"
+  },
+  "author": {
+    "name": "Christopher Brown",
+    "email": "io@henrian.com"
+  },
+  "main": "ruthless",
+  "bin": {
+    "ruthless" : "./ruthless.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chbrown/ruthless.git"
+  },
+  "dependencies": {
+    "optimist": "*",
+    "async": "*",
+    "pg": "*"
+  }
+}
