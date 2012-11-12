@@ -65,9 +65,10 @@ function fetch(id, urlStr, tag, depth, callback) {
       query('UPDATE pages SET failed = NOW(), error = $1 WHERE id = $2', [err.toString(), id], callback);
     }
     else {
-      var href_match, re = /href\s*=\s*('|")(.+?)\1/g, hrefs = {};
+      var href_match, href, re = /href\s*=\s*('|")(.+?)\1/g, hrefs = {};
       while (href_match = re.exec(html)) {
-        hrefs[href_match[2].replace(/#.+/g, '')] = 1;
+        href = href_match[2].replace(/#.+/g, '').replace(/&amp;/g, '&');
+        hrefs[href] = 1;
       }
       hrefs = Object.keys(hrefs);
 
@@ -81,7 +82,11 @@ function fetch(id, urlStr, tag, depth, callback) {
             child_urlObj = urllib.parse(child_urlStr),
             new_depth = depth + (child_urlObj.hostname === urlObj.hostname ? 1 : 100);
 
-          if (seen[tag + child_urlStr]) {
+          if (href.match(/^mailto:/)) {
+            // ignore email links
+            callback(null);
+          }
+          else if (seen[tag + child_urlStr]) {
             callback(null);
           }
           else {
@@ -144,9 +149,15 @@ if (require.main === module) {
   async.forEach(urls,
     function(url, callback) {
       query('INSERT INTO pages (url, tag, depth) VALUES ($1, $2, $3)', [url, tag, 0], function(err) {
-        if (err && err.message.match(/violates unique constraint/))
-          err = null;
-        callback(err);
+        if (err && err.message.match(/violates unique constraint/)) {
+          // minimize depth if it already exists
+          query('UPDATE pages SET depth = $1 WHERE url = $2', [0, url], function(err) {
+            callback(err);
+          });
+        }
+        else {
+          callback();
+        }
       });
     },
     function(err) {
@@ -161,4 +172,25 @@ if (require.main === module) {
 // process.on('SIGINT', function () {
 //   console.log('Got SIGINT. Attempting to flush counts buffer and exiting.');
 //   process.exit(0);
+// });
+
+// // fix bad urls
+// query("SELECT id, url FROM pages WHERE url LIKE '%&amp;%' ORDER BY depth", function(err, result) {
+//   logerr(err);
+//   async.forEachSeries(result.rows,
+//     function(row, callback) {
+//       var new_url = row.url.replace(/&amp;/g, '&');
+//       console.log(row.url, '->', new_url);
+//       query('UPDATE pages SET url = $1, fetched = NULL WHERE id = $2', [new_url, row.id], function(err) {
+//         if (err && err.message.match(/violates unique constraint/)) {
+//           err = null;
+//         }
+//         callback(err);
+//       });
+//     },
+//     function(err) {
+//       logerr(err);
+//       console.log('Done fixing');
+//     }
+//   );
 // });
