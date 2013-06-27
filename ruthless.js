@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-var fs = require('fs'),
-  http = require('http'),
-  https = require('https'),
-  urllib = require('url'),
-  zlib = require('zlib'),
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var urllib = require('url');
+var zlib = require('zlib');
 
-  async = require('async'),
-  pg = require('pg'),
-  argv = require('optimist').argv,
-  pg_config = {user: process.env.USER, database: 'ruthless'};
+var async = require('async');
+var pg = require('pg');
+var argv = require('optimist').argv;
+var pg_config = {user: process.env.USER, database: 'ruthless'};
 
 function logerr(err) { if (err) console.error(err); }
 
@@ -122,13 +122,18 @@ function fetch(id, urlStr, tag, depth, callback) {
 // work is called from loop, which is my attempt to recurse infinitely without proper tail recursion
 // Hey v8 devs! How about some true LISPy tail recursion?
 function work(callback) {
-  query('SELECT id, url, tag, depth FROM pages WHERE fetched IS NULL AND failed IS NULL ORDER BY depth LIMIT 1', function(err, result) {
-    logerr(err);
-    if (result.rows.length) {
-      var page = result.rows[0];
-      fetch(page.id, page.url, page.tag, page.depth, function(err) {
+  query('SELECT depth FROM pages WHERE fetched IS NULL \
+         AND failed IS NULL ORDER BY depth LIMIT 1', function(err, min_depth) {
+    if (min_depth.rows.length) {
+      query('SELECT id, url, tag, depth FROM pages WHERE fetched IS NULL \
+             AND failed IS NULL AND depth = $1 LIMIT 10000', [min_depth.rows[0].depth], function(err, results) {
         logerr(err);
-        callback();
+        var random_index = Math.random() * results.rows.length | 0;
+        var page = results.rows[random_index];
+        fetch(page.id, page.url, page.tag, page.depth, function(err) {
+          logerr(err);
+          callback();
+        });
       });
     }
     else {
