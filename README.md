@@ -8,6 +8,7 @@ better than the competition.
 
 It's called `ruthless` because it does not respect robots.txt.
 
+
 ## Current philosophy
 
 I wanted a stateful queue, in case of stops or restarts. Redis was the first choice, but I had too much metadata.
@@ -46,35 +47,18 @@ TODO: Add more than one worker! It's currently kind of slow, because most things
 Basically, I think the `seen` cache can handle most locking issues; as soon as `work()` fetches a new url, add the url to seen.
 Even if a page is fetched twice, it's not a big deal!
 
-## Initialization
+### Initialization
 
-Like I said, this uses a PostgreSQL database.
+If the supplied credentials have superuser privileges, the database and `pages` table will be created automatically.
 
-    dropdb ruthless; createdb ruthless && psql ruthless < schema.sql
+Otherwise, run the following at your command line to initialize (and reset) everything to the defaults:
 
-# Notes
-
-    var test_url = 'http://yahoo.com/';
-
-    var res = null;
-    http.get(test_url, function(response) { res = response; })
-
-    var html = null;
-    GET(test_url, function(err, res) { html = res; });
-    html.match(/href=('|")(.+?)\1/g)
-
-    { 'content-type': 'text/html; charset=UTF-8' }
-
-### Things that I used to depend on
-
-    "cheerio": "*",
-    "underscore": "*",
-    "buffertools": "*",
-    "jschardet": "*",
-    "iconv": "*",
-
-    __ = require('underscore')._,
+```bash
+dropdb ruthless
+createdb ruthless
+psql ruthless < schema.sql
+```
 
 ## License
 
-Copyright 2012 Christopher Brown, [MIT License](http://opensource.org/licenses/MIT)
+Copyright © 2012–2013 Christopher Brown. [MIT Licensed](LICENSE).
