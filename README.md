@@ -1,12 +1,14 @@
-# Ruthless
+# cameo-crawler
 
-There are already tens of Node.js scripts that spider / crawl sites, many more Python and Ruby ones.
-It isn't clear how they work, or that they even recurse.
+There are already tens of Node.js scripts that spider / crawl sites, and many more Python and Ruby ones.
+It isn't clear how many of them they work, or that they even recurse.
+Or if they do, is it depth-first? Breadth-first?
 
 This project is a work in progress. I intend to document at least its philosophy, if not methodology,
 better than the competition.
 
-It's called `ruthless` because it does not respect robots.txt.
+It's ruthless (this package used to be called "ruthless") in that it does not respect `robots.txt`.
+So, you're on your own if you violate some vengeful site's TOS.
 
 
 ## Current philosophy
@@ -41,11 +43,6 @@ Here is an sample of depths retrieved for a single seed site (a blog) that I let
 
 As it was, I hadn't gotten through the 3-deep sites yet.
 
-Question: should I even keep track of sites >10 deep? Do I care about other domains?
-
-TODO: Add more than one worker! It's currently kind of slow, because most things happen in series.
-Basically, I think the `seen` cache can handle most locking issues; as soon as `work()` fetches a new url, add the url to seen.
-Even if a page is fetched twice, it's not a big deal!
 
 ### Initialization
 
@@ -54,11 +51,19 @@ If the supplied credentials have superuser privileges, the database and `pages` 
 Otherwise, run the following at your command line to initialize (and reset) everything to the defaults:
 
 ```bash
-dropdb ruthless
-createdb ruthless
-psql ruthless < schema.sql
+dropdb cameo-crawler; createdb cameo-crawler && psql cameo-crawler < schema.sql
 ```
+
+### TODO
+
+* Use [`cluster`](http://nodejs.org/api/cluster.html) to spawn multiple workers.
+  It's currently kind of slow, because most things happen in series.
+* The `seen` cache can handle most locking issues; as soon as `work()` fetches a new url, add the url to seen.
+  Even if a page is fetched twice, it's not a big deal!
+* Allow a threshold depth, i.e., stop after going 10 links deep into a seed url.
+* Allow constraining a query to a single domain.
+
 
 ## License
 
-Copyright © 2012–2013 Christopher Brown. [MIT Licensed](LICENSE).
+Copyright © 2012–2014 Christopher Brown. [MIT Licensed](LICENSE).

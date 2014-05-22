@@ -1,4 +1,6 @@
-CREATE TABLE IF NOT EXISTS pages (
+-- $ dropdb cameo-crawler; createdb cameo-crawler && psql cameo-crawler < schema.sql
+
+CREATE TABLE pages (
   id serial PRIMARY KEY,
   parent_id integer references pages(id),
   url text NOT NULL,

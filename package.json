@@ -1,5 +1,5 @@
 {
-  "name": "ruthless",
+  "name": "cameo-crawler",
   "version": "0.2.0",
   "description": "Crawl the web breadth-first from a seed url, statefully",
   "keywords": [
@@ -9,26 +9,28 @@
     "recurse",
     "postgres"
   ],
-  "homepage": "https://github.com/chbrown/ruthless",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/chbrown/ruthless/issues",
-    "email": "io@henrian.com"
-  },
-  "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
-  "bin": {
-    "ruthless": "bin/ruthless.js"
-  },
+  "homepage": "https://github.com/chbrown/cameo-crawler",
   "repository": {
     "type": "git",
-    "url": "git://github.com/chbrown/ruthless.git"
+    "url": "git://github.com/chbrown/cameo-crawler.git"
   },
+  "bugs": {
+    "url": "https://github.com/chbrown/cameo-crawler/issues",
+    "email": "io@henrian.com"
+  },
+  "license": "MIT",
+  "author": "Christopher Brown <io@henrian.com> (http://henrian.com)",
   "dependencies": {
     "async": "*",
+    "loge": "*",
     "optimist": "*",
-    "pg": "*",
-    "streaming": "*",
-    "underscore": "*",
-    "winston": "*"
+    "sqlcmd": "*",
+    "streaming": "*"
+  },
+  "bin": {
+    "cameo-crawler": "bin/cameo-crawler.js"
+  },
+  "config": {
+    "database": "cameo-crawler"
   }
 }
