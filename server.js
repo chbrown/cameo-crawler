@@ -7,28 +7,11 @@ var db = require('./lib/db');
 var models = require('./lib/models');
 
 exports.initialize = function(callback) {
-  /** initialize: if the database does not already exist, create it and run the
-
-  Seeds that already exist are ignored.
-
-  urls: [String]
-  tag: String
-  depth: Number (usually 0)
-  callback: function(err: Error | undefined)
+  /** initialize: if the database does not already exist,
+    create it and run the local schema.sql file on it.
   */
-  db.databaseExists(function(err, exists) {
-    if (err) return callback(err);
-    if (exists) return callback();
-
-    logger.debug('Creating database');
-    db.createDatabase(function(err) {
-      if (err) return callback(err);
-
-      var schema_path = path.join(__dirname, 'schema.sql');
-      logger.debug('Executing schema on database');
-      db.executeSQLFile(schema_path, callback);
-    });
-  });
+  var sql_filepath = path.join(__dirname, 'schema.sql');
+  db.initializeDatabase(sql_filepath, callback);
 };
 
 exports.addSeeds = function(urls, tag, depth, callback) {
