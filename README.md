@@ -66,4 +66,4 @@ dropdb cameo-crawler; createdb cameo-crawler && psql cameo-crawler < schema.sql
 
 ## License
 
-Copyright 2012–2014-2015 Christopher Brown. [MIT Licensed](http://opensource.org/licenses/MIT).
+Copyright 2012-2015 Christopher Brown. [MIT Licensed](http://opensource.org/licenses/MIT).

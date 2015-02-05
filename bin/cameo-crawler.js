@@ -2,11 +2,11 @@
 /*jslint node: true */
 var async = require('async');
 var logger = require('loge');
-var optimist = require('optimist');
+var yargs = require('yargs');
 
 var server = require('../server');
 
-optimist
+yargs
   .usage('Usage: cameo-crawler <options> <url> [<url> ...] ')
   .describe({
     tag: 'tag to apply to the given seed urls (which propagates to all linked pages)',
@@ -19,17 +19,17 @@ optimist
   .demand(['tag'])
   .alias({verbose: 'v'});
 
-var argv = optimist.argv;
+var argv = yargs.argv;
 logger.level = argv.verbose ? 'debug' : 'info';
 
 if (argv.help) {
-  optimist.showHelp();
+  yargs.showHelp();
 }
 else if (argv.version) {
   console.log(require('../package').version);
 }
 else {
-  // argv = optimist.check(function(argv) {
+  // argv = yargs.check(function(argv) {
   //   if (argv._.length < 1) {
   //     throw new Error('You must specify at least one seed url');
   //   }

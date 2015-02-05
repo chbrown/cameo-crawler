@@ -10,8 +10,13 @@ exports.initialize = function(callback) {
   /** initialize: if the database does not already exist,
     create it and run the local schema.sql file on it.
   */
-  var sql_filepath = path.join(__dirname, 'schema.sql');
-  db.initializeDatabase(sql_filepath, callback);
+  db.createDatabaseIfNotExists(function(err, exists) {
+    if (err) throw err;
+
+    var patches_dirpath = path.join(__dirname, 'database');
+
+    db.executePatches('_schema_patches', patches_dirpath, callback);
+  });
 };
 
 exports.addSeeds = function(urls, tag, depth, callback) {
@@ -32,6 +37,7 @@ exports.addSeeds = function(urls, tag, depth, callback) {
       tag: tag,
       depth: depth,
     })
+    .returning('*')
     .execute(function(err) {
       if (err) {
         if (err.message.match(/violates unique constraint/)) {

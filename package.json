@@ -23,14 +23,11 @@
   "dependencies": {
     "async": "*",
     "loge": "*",
-    "optimist": "*",
-    "sqlcmd": "*",
-    "streaming": "*"
+    "sqlcmd": "~0.2.3",
+    "streaming": "*",
+    "yargs": "*"
   },
   "bin": {
     "cameo-crawler": "bin/cameo-crawler.js"
-  },
-  "config": {
-    "database": "cameo-crawler"
   }
 }
